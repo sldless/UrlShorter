@@ -1,11 +1,12 @@
 ## Url shortener
-A url shortener that using Sqlite and flask.
+A URL shorter that is using Sqlite3 and Flask
 
 #### Install the package
-```pip install -r pkg.txt -U```
+```pip install flask sqlite3```
 
 #### Run 
 ```python main.py```
+When you run it go to http://127.0.0.1:5000/s/cpUsGSLPh to check if it's working
 
 
-*This is Just a simple code, so it maybe not work as you wanted (Rewrite the code if you want it to work as you wanted)*
+
