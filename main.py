@@ -1,46 +1,33 @@
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, url_for
 app = Flask(__name__)
 import random
-import string
-import sqlite3, time, config
-sql = sqlite3.connect('sqlite.db', check_same_thread=False)
+import sqlite3
+sql = sqlite3.connect('urls.sqlite', check_same_thread=False)
 db = sql.cursor()
-
-
-@app.route('/', methods = ["GET", "POST"])
-def index():
+@app.route('/post', methods=["POST"])
+def POSTURL():
   if request.method == "POST":
-    # Create an url id / url (table)
-    db.execute('''CREATE TABLE IF NOT EXISTS urls (url_id, url)''')
-    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$%^&*()-_=+[{]}|;:<.>?`~"
-    #Create the random strings
-    random_id = ''.join([random.choice(chars) for i in range(20)])
-    ab  =random_id
-    # This inserts random strings / url
-    db.execute(f"INSERT INTO urls VALUES ('{ab}', '{request.form['url']}')")
-    # Save the strings / url
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    random_id = ''.join([random.choice(chars) for i in range(9)])
+    db.execute("INSERT INTO urls (id, url) VALUES (?, ?)", (random_id, request.form['url']))
     sql.commit()
-    context = {
-      'cfg': config,
-      'url_id': ab
-    }
-    db.execute(f"INSERT INTO urls VALUES ('NotARickroll', 'https://youtu.be/dQw4w9WgXcQ')")
-    sql.commit()
-    return render_template('index.html', **context)
-  else:
-    return render_template('index.html') 
-@app.route('/<url_id>')
-def url_id(url_id):
-  thing =  db.execute("SELECT url_id, url FROM urls")
-  if thing:
-    for row in db:
-        print(row)
-    if row[1].find("http://") != 0 and row[1].find("https://") != 0:
-        url = "http://" + row[1]
-        return redirect(url)
-    else:
-      return redirect(row[1])
-  else:
-    return redirect("/")
+    return redirect(url_for('index', uri_id=random_id))
+@app.route('/', methods=["GET"])
+def index():
+  uri_id = request.args.get('uri_id')
+  db.execute('''CREATE TABLE IF NOT EXISTS urls (id, url)''')
+  data =db.execute("SELECT * FROM urls WHERE id = ?", (uri_id,)).fetchone()
+  sql.commit()
+  if request.method == "GET":
+    if uri_id:
+      return render_template('index.html', data=data)
+  return render_template('index.html', data=data)
+@app.route('/s/<uri_id>')
+def GETURL(uri_id):
+  data = db.execute("SELECT * FROM urls WHERE id = ?", (uri_id,)).fetchone()
+  sql.commit()
+  if data != None:
+    return redirect(data[1])
+  return redirect("/")
 if __name__ == '__main__':
-    app.run(debug=True)
+  app.run(debug=True)
