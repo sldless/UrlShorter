@@ -1,28 +1,42 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <title>Url shortener</title>
-  </head>
-
-  <body>
-    <div class="container">
-      <form action="/" method="POST">
-        <div class="row">
-          <div class="col-md-4">
-            {% if url_id %}
-                <input name="url" class="form-control" required>
-                <button class="btn btn-success">Create The Url</button>
-                <input readonly class="form-control" value="{{ cfg.Site }}{{ url_id }}" 
-            {% else %} 
-                <input name="url" class="form-control" required>
-                <button class="btn btn-success">Create The Url</button>
-            {% endif %}
-
-          </div>
-        </div>
-      </form>
-    </div>
-  </body>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL SHORTER</title>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'>
+    <style>
+    html {
+      background: black;
+     }
+    body {
+      background: black;
+      color: white;
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 61%;
+      transform: translateX(-50%) translateY(-50%);
+      color: white;
+      font-size: 30px;
+      font-family: Orbitron;
+}
+  </style>
+</head>
+<body>
+<div class="container">
+  <form action="/post" method="POST">
+    <input type="url" placeholder="Enter URL" pattern="https?://.+" name="url" required />
+    <input type="submit" value="Shorten" /> 
+    {% if data[0]%} 
+      <div>URL: <a href="http://127.0.0.1:5000/s/{{data[0]}}">http://127.0.0.1:5000/s/{{data[0]}}</a></div>
+    {% else %}
+      <div>URL:  None</div>
+    {% endif %}
+  </form>
+</div>
+</body>
 </html>
